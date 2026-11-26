@@ -98,7 +98,7 @@ export default function AppSettings( { onNotice } ) {
 	const fromConfig = __( 'Staat in wp-config.php.', 'own-instagram-feed' );
 
 	return (
-		<Card className="own-instagram-card">
+		<Card className="own-instagram-card own-instagram-app">
 			<CardHeader>
 				<strong>{ __( 'Meta-app', 'own-instagram-feed' ) }</strong>
 			</CardHeader>

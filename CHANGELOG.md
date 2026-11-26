@@ -4,6 +4,10 @@ All notable changes to OWN Instagram Feed. Newest first. [Semver](https://semver
 
 ## 1.0.2 — 2026-11-26
 
+### Changed
+
+- **Admin pages use the full width** instead of stopping at 960px, like WordPress' own screens. Form fields and text keep a readable width; on wide screens the Meta-app card puts the checklist next to the fields.
+
 ### Fixed
 
 - **"Kopiëren" button next to a connect link** no longer gets squeezed in the sites table (Network Admin → Instagram): its text stays inside the button, the link wraps beside it.

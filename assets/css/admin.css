@@ -1,9 +1,16 @@
 /* OWN Instagram Feed — admin screens. Layout only: everything visible comes
    from @wordpress/components, so the screens follow WordPress' own look. */
 
-.own-instagram { max-width: 960px; }
+/* Full width, like WordPress' own screens: the sites table needs the room.
+   Only text and form fields keep a readable width — a field stretched over
+   a wide screen is hard to read and to scan. */
 .own-instagram h1 { margin-bottom: 4px; }
-.own-instagram-lead { margin: 0 0 16px; color: #50575e; font-size: 14px; }
+.own-instagram-lead { max-width: 60rem; margin: 0 0 16px; color: #50575e; font-size: 14px; }
+.own-instagram-card .components-base-control,
+.own-instagram-card .components-card__body > .own-instagram-copy,
+.own-instagram-card .components-card__body > p,
+.own-instagram-card .components-card__body > .components-notice,
+.own-instagram-checklist ul { max-width: 48rem; }
 .own-instagram-help { margin: 8px 0 0; color: #757575; font-size: 12px; }
 .own-instagram-notice { margin: 0 0 16px; }
 .own-instagram-stack { display: grid; gap: 20px; }
@@ -46,3 +53,15 @@
 .own-instagram-table .own-instagram-copy { margin-top: 8px; }
 .own-instagram-sub { display: block; margin-top: 2px; color: #757575; font-size: 12px; font-weight: 400; }
 .own-instagram-sub.is-error { color: #b32d2e; }
+
+/* Meta-app card on a wide screen: form left, checklist right, so the full
+   width isn't empty space. The Card component wraps header and bodies in one
+   inner div; that div becomes the grid. Below 1280px it stacks as before. */
+@media (min-width: 1280px) {
+	.own-instagram-app > div:first-child {
+		display: grid;
+		grid-template-columns: minmax(0, 48rem) minmax(18rem, 1fr);
+	}
+	.own-instagram-app .components-card__header { grid-column: 1 / -1; }
+	.own-instagram-app .own-instagram-checklist { border-left: 1px solid #f0f0f1; }
+}
