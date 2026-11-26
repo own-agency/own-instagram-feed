@@ -1,0 +1,45 @@
+/* OWN Instagram Feed — admin screens. Layout only: everything visible comes
+   from @wordpress/components, so the screens follow WordPress' own look. */
+
+.own-instagram { max-width: 960px; }
+.own-instagram h1 { margin-bottom: 4px; }
+.own-instagram-lead { margin: 0 0 16px; color: #50575e; font-size: 14px; }
+.own-instagram-help { margin: 8px 0 0; color: #757575; font-size: 12px; }
+.own-instagram-notice { margin: 0 0 16px; }
+.own-instagram-stack { display: grid; gap: 20px; }
+.own-instagram-tabs .components-tab-panel__tab-content { padding-top: 16px; }
+
+.own-instagram-card .components-card__body > * + * { margin-top: 16px; }
+.own-instagram-card .components-notice { margin: 0 0 16px; }
+.own-instagram-account { font-size: 14px; }
+.own-instagram-meta { margin: 0 0 12px; color: #50575e; }
+.own-instagram-invite h3,
+.own-instagram-checklist h3 { margin: 0 0 8px; font-size: 13px; }
+.own-instagram-checklist ul { margin: 0 0 12px 18px; list-style: disc; color: #50575e; }
+
+.own-instagram-badge {
+	display: inline-block; padding: 2px 8px; border-radius: 999px;
+	font-size: 11px; font-weight: 600; line-height: 1.6;
+	background: #f0f0f1; color: #50575e;
+}
+.own-instagram-badge.is-success { background: #edfaef; color: #00611c; }
+.own-instagram-badge.is-warning { background: #fcf9e8; color: #8a6100; }
+.own-instagram-badge.is-muted { background: #f0f0f1; color: #50575e; }
+
+.own-instagram-copy__label { margin-bottom: 6px; font-size: 11px; font-weight: 500; text-transform: uppercase; }
+.own-instagram-copy__value {
+	flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere;
+	padding: 6px 8px; border-radius: 2px; background: #f6f7f7; font-size: 12px;
+}
+
+.own-instagram-sites { overflow-x: auto; }
+.own-instagram-table { width: 100%; border-collapse: collapse; }
+.own-instagram-table th,
+.own-instagram-table td { padding: 12px 12px 12px 0; border-top: 1px solid #f0f0f1; text-align: left; vertical-align: top; }
+.own-instagram-table thead th { padding-top: 0; border-top: 0; color: #757575; font-size: 12px; font-weight: 500; }
+.own-instagram-table tbody th { min-width: 160px; font-weight: 600; }
+.own-instagram-table td:last-child { width: 1%; min-width: 220px; }
+.own-instagram-table .own-instagram-account { margin-left: 6px; }
+.own-instagram-table .own-instagram-copy { margin-top: 8px; }
+.own-instagram-sub { display: block; margin-top: 2px; color: #757575; font-size: 12px; font-weight: 400; }
+.own-instagram-sub.is-error { color: #b32d2e; }

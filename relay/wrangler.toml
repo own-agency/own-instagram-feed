@@ -1,0 +1,11 @@
+# Instagram-relay van OWN. Uitleg en routes: worker.js.
+name = "own-instagram-relay"
+main = "worker.js"
+compatibility_date = "2026-11-01"
+
+[observability]
+enabled = true
+
+# Eigen domein, zodra het domein via Cloudflare loopt. Zonder dit draait de
+# relay op https://own-instagram-relay.<account>.workers.dev/.
+# routes = [{ pattern = "connect.myownagency.nl", custom_domain = true }]

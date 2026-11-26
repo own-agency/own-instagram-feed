@@ -1,0 +1,54 @@
+name: Release
+
+# Push a tag vX.Y.Z whose version matches the plugin header and VERSION
+# constant. This builds own-instagram-feed.zip and attaches it to a GitHub
+# release; sites pick it up through Dashboard → Updates (Plugin Update Checker).
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version matches the tag
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          grep -q "^ \* Version:           ${TAG}$" own-instagram-feed.php
+          grep -q "const VERSION     = '${TAG}';" own-instagram-feed.php
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          tools: composer
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Test
+        run: php tests/CoreTest.php
+
+      - name: Build
+        run: |
+          npm ci
+          npm run build
+          composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Package
+        run: |
+          mkdir -p dist/own-instagram-feed
+          rsync -a --exclude-from=.distignore --exclude=dist ./ dist/own-instagram-feed/
+          cd dist && zip -qr own-instagram-feed.zip own-instagram-feed
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/own-instagram-feed.zip
+          generate_release_notes: true

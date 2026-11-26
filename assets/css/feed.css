@@ -1,0 +1,198 @@
+/*
+ * OWN Instagram Feed — default styles. Loaded only on pages with the block.
+ * Turn off: add_theme_support( 'own-instagram-feed-styles', false ).
+ *
+ * Tune without overriding templates through these custom properties:
+ *   --own-instagram-gap          space between posts
+ *   --own-instagram-radius       corner radius of cards and tiles
+ *   --own-instagram-card-bg      card background
+ *   --own-instagram-card-color   card text
+ *   --own-instagram-card-border  card border
+ *
+ * Every rule starts at .own-instagram-feed (specificity 0,2,x), so a theme's
+ * content typography (e.g. Tailwind Typography's .prose margins on img, ul,
+ * li, p and its link colours, all 0,1,x) never reaches into the feed.
+ *
+ * Columns follow the block's own width (container queries), not the screen:
+ * the block can sit in a narrow column.
+ */
+
+.own-instagram-feed {
+	--own-instagram-gap: 0.75rem;
+	--own-instagram-radius: 1rem;
+	--own-instagram-card-bg: #fff;
+	--own-instagram-card-color: #1d2327;
+	--own-instagram-card-border: rgb(0 0 0 / 0.12);
+	--own-instagram-cols: 2;
+	container-type: inline-size;
+}
+
+.own-instagram-feed:not(.is-rounded) { --own-instagram-radius: 0; }
+
+/* Shortcode and own_instagram_feed() have no margin setting like the block
+   (wp-block-own-instagram-feed): keep them off the text around them. */
+.own-instagram-feed:not(.wp-block-own-instagram-feed) { margin-block: 1.5em; }
+
+.own-instagram-feed .own-instagram-feed__list {
+	display: grid;
+	grid-template-columns: repeat(var(--own-instagram-cols), minmax(0, 1fr));
+	gap: var(--own-instagram-gap);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.own-instagram-feed .own-instagram-feed__item { display: flex; margin: 0; padding: 0; }
+.own-instagram-feed .own-instagram-feed__item::marker { content: none; }
+.own-instagram-feed .own-instagram-feed__item > * { width: 100%; }
+
+/* Editor notes and the empty state: small, quiet, centred; colours follow the
+   surrounding text so it works on coloured sections too. */
+.own-instagram-feed .own-instagram-feed__message,
+.own-instagram-feed .own-instagram-feed__empty {
+	margin: 0 auto;
+	padding: 0.875rem 1.125rem;
+	border-radius: var(--own-instagram-radius);
+	background: color-mix(in srgb, currentColor 5%, transparent);
+	font-size: 0.875rem;
+	line-height: 1.5;
+	text-align: center;
+}
+.own-instagram-feed .own-instagram-feed__empty { width: fit-content; max-width: 32rem; }
+.own-instagram-feed .own-instagram-feed__empty p { margin: 0; }
+.own-instagram-feed .own-instagram-feed__empty-title { font-weight: 600; }
+.own-instagram-feed .own-instagram-feed__empty-text { opacity: 0.75; }
+.own-instagram-feed .own-instagram-feed__message.is-warning { margin-bottom: 0.75rem; background: #fcf9e8; color: #8a6100; }
+
+/* Columns. Cards need room for the name and caption: never more than four in
+   a row; six become two rows of three. */
+.own-instagram-feed--cards.own-instagram-feed--count-3 { --own-instagram-cols: 1; }
+.own-instagram-feed--grid.own-instagram-feed--count-3 { --own-instagram-cols: 3; }
+@container (min-width: 36rem) {
+	.own-instagram-feed .own-instagram-feed__list { --own-instagram-gap: 1.25rem; }
+	.own-instagram-feed--cards.own-instagram-feed--count-3 .own-instagram-feed__list { --own-instagram-cols: 3; }
+	.own-instagram-feed--grid.own-instagram-feed--count-6 .own-instagram-feed__list { --own-instagram-cols: 3; }
+}
+@container (min-width: 42rem) {
+	.own-instagram-feed--grid.own-instagram-feed--count-4 .own-instagram-feed__list,
+	.own-instagram-feed--grid.own-instagram-feed--count-8 .own-instagram-feed__list { --own-instagram-cols: 4; }
+}
+@container (min-width: 48rem) {
+	.own-instagram-feed--cards.own-instagram-feed--count-4 .own-instagram-feed__list,
+	.own-instagram-feed--cards.own-instagram-feed--count-8 .own-instagram-feed__list { --own-instagram-cols: 4; }
+	.own-instagram-feed--cards.own-instagram-feed--count-6 .own-instagram-feed__list { --own-instagram-cols: 3; }
+}
+@container (min-width: 56rem) {
+	.own-instagram-feed--grid.own-instagram-feed--count-6 .own-instagram-feed__list { --own-instagram-cols: 6; }
+}
+
+.own-instagram-feed .own-instagram-icon { width: 1rem; height: 1rem; flex: none; margin: 0; }
+.own-instagram-feed .own-instagram-icon.is-large { width: 2rem; height: 2rem; }
+
+/* Card: light and flat, like a post in the Instagram app. */
+.own-instagram-feed .own-instagram-card {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	border: 1px solid var(--own-instagram-card-border);
+	border-radius: var(--own-instagram-radius);
+	background: var(--own-instagram-card-bg);
+	color: var(--own-instagram-card-color);
+	font-weight: 400;
+	text-decoration: none;
+	transition: border-color 0.15s ease;
+}
+.own-instagram-feed .own-instagram-card:hover,
+.own-instagram-feed .own-instagram-card:focus-visible { border-color: rgb(0 0 0 / 0.28); color: var(--own-instagram-card-color); text-decoration: none; }
+.own-instagram-feed .own-instagram-card:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
+.own-instagram-feed .own-instagram-card__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	padding: 0.625rem 0.75rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+	line-height: 1.4;
+}
+.own-instagram-feed .own-instagram-card__header .own-instagram-icon { opacity: 0.5; }
+.own-instagram-feed .own-instagram-card__user { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.own-instagram-feed .own-instagram-card__media {
+	position: relative;
+	display: block;
+	aspect-ratio: 4 / 5;
+	overflow: hidden;
+	background: #f0f0f1;
+}
+.own-instagram-feed .own-instagram-card__media img,
+.own-instagram-feed .own-instagram-tile img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	max-width: none;
+	margin: 0;
+	border-radius: 0;
+	object-fit: cover;
+	transition: transform 0.5s ease;
+}
+.own-instagram-feed .own-instagram-card:hover .own-instagram-card__media img { transform: scale(1.03); }
+
+.own-instagram-feed .own-instagram-card__play {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	pointer-events: none;
+}
+.own-instagram-feed .own-instagram-card__play .own-instagram-icon {
+	box-sizing: content-box;
+	width: 1.25rem;
+	height: 1.25rem;
+	padding: 0.875rem 0.8rem 0.875rem 0.95rem;
+	border-radius: 999px;
+	background: rgb(0 0 0 / 0.45);
+	color: #fff;
+}
+
+/* Padding on the wrapper: line-clamp clips at the padding box, so padding on
+   the clamped element itself lets a third line show through. */
+.own-instagram-feed .own-instagram-card__caption { display: block; padding: 0.75rem 0.75rem 0.875rem; font-size: 0.875rem; line-height: 1.375; }
+.own-instagram-feed .own-instagram-card__caption > span {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+}
+
+/* Photos only. */
+.own-instagram-feed .own-instagram-tile {
+	position: relative;
+	display: block;
+	aspect-ratio: 1;
+	overflow: hidden;
+	border-radius: var(--own-instagram-radius);
+	background: #f0f0f1;
+}
+.own-instagram-feed .own-instagram-tile__overlay {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	background: rgb(0 0 0 / 0);
+	color: #fff;
+	opacity: 0;
+	transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+.own-instagram-feed .own-instagram-tile:hover .own-instagram-tile__overlay,
+.own-instagram-feed .own-instagram-tile:focus-visible .own-instagram-tile__overlay { background: rgb(0 0 0 / 0.3); opacity: 1; }
+.own-instagram-feed .own-instagram-tile:hover img { transform: scale(1.05); }
+
+@media (prefers-reduced-motion: reduce) {
+	.own-instagram-feed .own-instagram-card,
+	.own-instagram-feed .own-instagram-card__media img,
+	.own-instagram-feed .own-instagram-tile img,
+	.own-instagram-feed .own-instagram-tile__overlay { transition: none; }
+}

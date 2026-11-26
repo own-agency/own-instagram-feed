@@ -1,0 +1,14 @@
+{
+  "name": "own-agency/own-instagram-feed",
+  "description": "OWN Instagram Feed WordPress plugin.",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "php": ">=8.0",
+    "yahnis-elsts/plugin-update-checker": "^5.5"
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "platform": { "php": "8.0" }
+  }
+}

@@ -1,0 +1,55 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "own-instagram/feed",
+	"title": "Instagram-feed",
+	"category": "embed",
+	"icon": "instagram",
+	"description": "Toont de nieuwste posts van het Instagram-account dat aan deze website is gekoppeld.",
+	"keywords": [
+		"instagram",
+		"social",
+		"feed",
+		"posts",
+		"foto's"
+	],
+	"textdomain": "own-instagram-feed",
+	"attributes": {
+		"layout": {
+			"type": "string",
+			"enum": [
+				"cards",
+				"grid"
+			],
+			"default": "cards"
+		},
+		"count": {
+			"type": "number",
+			"default": 4
+		},
+		"rounded": {
+			"type": "boolean",
+			"default": true
+		},
+		"showEmpty": {
+			"type": "boolean",
+			"default": false
+		}
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": [
+			"wide",
+			"full"
+		],
+		"spacing": {
+			"margin": [
+				"top",
+				"bottom"
+			]
+		}
+	},
+	"editorScript": "own-instagram-feed-block-editor",
+	"style": "own-instagram-feed"
+}

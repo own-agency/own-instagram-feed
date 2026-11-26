@@ -1,0 +1,14 @@
+# Not shipped in the release zip (see .github/workflows/release.yml).
+/.git
+/.github
+/node_modules
+/src-js
+/tests
+/relay
+.distignore
+.gitignore
+package.json
+package-lock.json
+composer.json
+composer.lock
+.DS_Store

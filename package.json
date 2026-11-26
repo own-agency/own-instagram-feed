@@ -1,0 +1,15 @@
+{
+  "name": "own-instagram-feed",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OWN Instagram Feed — admin apps and block editor script.",
+  "scripts": {
+    "build": "wp-scripts build admin-site=./src-js/admin/site.js admin-network=./src-js/admin/network.js block-editor=./src-js/block/index.js --output-path=build",
+    "start": "wp-scripts start admin-site=./src-js/admin/site.js admin-network=./src-js/admin/network.js block-editor=./src-js/block/index.js --output-path=build",
+    "lint:js": "wp-scripts lint-js src-js"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^30.0.0",
+    "typescript": "5.6"
+  }
+}
