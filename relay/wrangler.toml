@@ -7,10 +7,9 @@ compatibility_date = "2026-11-01"
 # Cloudflare-account; Cloudflare maakt DNS-record en certificaat zelf aan).
 routes = [{ pattern = "connect.myownagency.nl", custom_domain = true }]
 
-# Het oude adres (own-instagram-relay.aged-wildflower-ae4f.workers.dev) blijft
-# bereikbaar tot de Meta-app en elke installatie het nieuwe adres gebruiken.
-# Daarna op false.
-workers_dev = true
+# Alleen het eigen adres: het workers.dev-adres staat uit, zodat er één URL is
+# om in de Meta-app en op de installaties bij te houden.
+workers_dev = false
 
 # Hosts waarheen de relay een Instagram-login mag doorsturen: per installatie
 # de hoofddomeinnaam (op een netwerk loopt elke school via de hoofdsite).

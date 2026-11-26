@@ -16,6 +16,9 @@ A release turns that section into a version (see CONTRIBUTING.md).
 
 ### Changed
 
+- Relay: the `workers.dev` address is switched off; the relay only answers on
+  `https://connect.myownagency.nl/`. Every installation must use that address
+  as its Relay-URL.
 - The Meta app is now called "OWN Social Feed" (was "My OWN Social Feed"); relay notifications and README follow.
 
 ## [1.2.1] - 2026-11-26
