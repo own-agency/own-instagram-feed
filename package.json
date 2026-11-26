@@ -1,6 +1,6 @@
 {
   "name": "own-instagram-feed",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "OWN Instagram Feed — admin apps and block editor script.",
   "scripts": {

@@ -31,6 +31,9 @@
 	flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere;
 	padding: 6px 8px; border-radius: 2px; background: #f6f7f7; font-size: 12px;
 }
+/* In a narrow table cell the long link takes all the room; without this the
+   flex item shrinks below its text and "Kopiëren" spills out of the border. */
+.own-instagram-copy .components-button { flex: none; white-space: nowrap; }
 
 .own-instagram-sites { overflow-x: auto; }
 .own-instagram-table { width: 100%; border-collapse: collapse; }

@@ -2,6 +2,12 @@
 
 All notable changes to OWN Instagram Feed. Newest first. [Semver](https://semver.org/): patch for fixes, minor for anything new, major only when the public API (see README) changes.
 
+## 1.0.2 — 2026-11-26
+
+### Fixed
+
+- **"Kopiëren" button next to a connect link** no longer gets squeezed in the sites table (Network Admin → Instagram): its text stays inside the button, the link wraps beside it.
+
 ## 1.0.1 — 2026-11-26
 
 ### Added
