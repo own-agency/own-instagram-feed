@@ -5,6 +5,11 @@
  * .github/workflows/release.yml) is attached to each release as an asset;
  * Plugin Update Checker installs that asset, not the source tree.
  *
+ * A git checkout (a development copy, .git present) never checks: an update
+ * replaces the whole plugin folder, .git and uncommitted work included. The
+ * release zip has no .git, so live sites are unaffected. Filter
+ * own_instagram/check_for_updates to override.
+ *
  * @package OWN\InstagramFeed
  */
 
@@ -22,6 +27,9 @@ final class Updater {
 
 	public static function register(): void {
 		if ( ! class_exists( PucFactory::class ) ) {
+			return;
+		}
+		if ( ! apply_filters( 'own_instagram/check_for_updates', ! file_exists( PLUGIN_DIR . '/.git' ) ) ) {
 			return;
 		}
 		$checker = PucFactory::buildUpdateChecker( self::REPOSITORY, PLUGIN_FILE, 'own-instagram-feed' );
