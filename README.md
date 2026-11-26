@@ -6,11 +6,11 @@ Werkt op een losse site en op multisite, per site of netwerkbreed geactiveerd. V
 
 ## Installeren en bijwerken
 
-Installeer de zip uit de [laatste release](https://github.com/own-agency/own-instagram-feed/releases). Daarna komen updates gewoon binnen via Dashboard → Updates.
+Installeer de zip van de nieuwste release:
+**https://github.com/own-agency/own-instagram-feed/releases/latest/download/own-instagram-feed.zip**
+(niet de "Source code"-zip: daar ontbreken de gebouwde bestanden). Daarna komen updates vanzelf binnen via Dashboard → Updates; op een multisite in Netwerkbeheer → Plugins.
 
-Een nieuwe versie uitbrengen: versie ophogen in de plugin-header **en** `VERSION` in `own-instagram-feed.php`, `CHANGELOG.md` bijwerken, mergen naar `main`, tag `vX.Y.Z` pushen. De GitHub Action bouwt de zip en hangt hem aan de release.
-
-Ontwikkelen: `npm install && npm run build` (of `npm start`), `composer install`. Tests: `php tests/CoreTest.php`.
+Ontwikkelen, branches en releases: zie [CONTRIBUTING.md](CONTRIBUTING.md). Wijzigingen per versie: [CHANGELOG.md](CHANGELOG.md).
 
 ## Instellen
 
@@ -38,6 +38,10 @@ define( 'OWN_INSTAGRAM_RELAY_URL', 'https://own-instagram-relay.aged-wildflower-
 define( 'OWN_INSTAGRAM_DEVELOPERS', array( 'ties', 'dev@ownagency.nl' ) ); // Wie de Meta-app ziet; nodig zodra een klant ook (super)admin is.
 define( 'OWN_INSTAGRAM_ALERT_EMAIL', 'dev@ownagency.nl' );                  // Wie de mail krijgt als een koppeling breekt.
 ```
+
+**Zet de hoofddomeinnaam op de allowlist van de relay.** De relay stuurt een Instagram-login alleen door naar installaties op `ALLOWED_HOSTS` (`relay/wrangler.toml`, of in Cloudflare: Worker → Settings → Variables). Op een netwerk loopt elke school via de hoofdsite, dus één regel per installatie, bijv. `ldvleiden.nl`. Staat de host er niet op, dan stopt koppelen met "Ongeldig terugkeeradres".
+
+**Op een losse klantsite:** zet het app-secret in `wp-config.php` (niet in de database) en definieer `OWN_INSTAGRAM_DEVELOPERS`. Zonder dat is elke beheerder van de site "ontwikkelaar" en ziet de Meta-app-instellingen.
 
 ### Per website
 
@@ -99,9 +103,21 @@ Oudere sites (bijv. werkenbijhetwakz.nl) hebben hun eigen Instagram-code en blij
 4. De oude Instagram-code van die site verwijderen. Laat nooit beide tegelijk draaien.
 5. Daarna mag de oude redirect-URI van die site uit de Meta-app.
 
+## Mappen
+
+| Map | Inhoud |
+|---|---|
+| `own-instagram-feed.php` | Pluginheader, autoloader, bootstrap |
+| `functions.php` | Publieke PHP-functies (`own_instagram_*`) |
+| `src/` | PHP-klassen (`OWN\InstagramFeed\…`): `Api/` (Meta), `Auth/` (koppelen, state, koppellinks), `Feed/` (sync, opslag, beelden, opruimen), `Rest/`, `Admin/`, `Block/` (blok, patroon, shortcode), `Settings/` |
+| `src-js/` | React-bron van de beheerschermen en het blok (wordt `build/`) |
+| `block/` | `block.json` van het blok |
+| `templates/` | `feed.php`, `card.php` (door een thema te overschrijven) |
+| `assets/` | CSS en iconen |
+| `relay/` | Cloudflare Worker (apart uitrollen, niet in de zip) |
+| `tests/` | `php tests/CoreTest.php`, zonder WordPress |
+| `.github/` | CI, release-workflow, PR-sjabloon |
+
 ## Voor wie verder bouwt
 
-- **Datamigraties** in `src/Upgrade.php`: genummerd, nooit een bestaande wijzigen, altijd een nieuwe toevoegen en `SITE_VERSION`/`NETWORK_VERSION` ophogen.
-- **Opgeslagen namen** (opties, capability, blocknaam, cron-hook) staan in `src/Config.php`. Hernoemen = een migratie.
-- **Het state-formaat** met de relay ligt vast in `tests/CoreTest.php`. Verandert die test, dan breekt de relay.
-- **Alleen stabiele `@wordpress/components`**, geen `__experimental*`: dan breekt een WordPress-update de schermen niet.
+Zie [CONTRIBUTING.md](CONTRIBUTING.md): branches, releases, en wat je niet breekt (migraties, opgeslagen namen, publieke API, het state-formaat met de relay).

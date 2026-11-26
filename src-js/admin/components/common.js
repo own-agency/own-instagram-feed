@@ -144,7 +144,7 @@ export function CopyField( { label, value, help } ) {
 
 /**
  * The result of a login, which Instagram's round trip brings back in the URL
- * (?own_instagram=connected|error&own_instagram_message=…). Shown once, then
+ * (?own_instagram=connected|error&own_instagram_error=<code>). Shown once, then
  * removed from the address bar so a reload doesn't repeat it.
  */
 export function useReturnNotice() {
@@ -164,10 +164,31 @@ export function useReturnNotice() {
 				),
 			} );
 		} else {
+			// Only our own texts: the URL carries a code, never a message,
+			// so a crafted link can't put words on this page. Meta's own
+			// wording is shown with the site's status (connectError).
+			const texts = {
+				denied: __(
+					'Er is geen toestemming gegeven op Instagram. Probeer het opnieuw.',
+					'own-instagram-feed'
+				),
+				site: __(
+					'De website bestaat niet meer.',
+					'own-instagram-feed'
+				),
+				invite: __(
+					'Deze koppellink is ingetrokken of vervangen. Maak een nieuwe link.',
+					'own-instagram-feed'
+				),
+				exchange: __(
+					'Instagram heeft de koppeling geweigerd. De reden staat bij de website hieronder.',
+					'own-instagram-feed'
+				),
+			};
 			setNotice( {
 				status: 'error',
 				text:
-					url.searchParams.get( 'own_instagram_message' ) ||
+					texts[ url.searchParams.get( 'own_instagram_error' ) ] ||
 					__(
 						'Koppelen is mislukt. Probeer het opnieuw.',
 						'own-instagram-feed'
@@ -175,6 +196,7 @@ export function useReturnNotice() {
 			} );
 		}
 		url.searchParams.delete( 'own_instagram' );
+		url.searchParams.delete( 'own_instagram_error' );
 		url.searchParams.delete( 'own_instagram_message' );
 		window.history.replaceState( null, '', url.toString() );
 	}, [] );

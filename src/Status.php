@@ -61,6 +61,24 @@ final class Status {
 			'removed'       => $removed,
 			'invite'        => $invite,
 			'cronNext'      => (int) wp_next_scheduled( Config::CRON_HOOK ),
+			'connectError'  => (string) get_site_transient( self::connect_error_key( $blog_id ) ),
 		);
+	}
+
+	/**
+	 * Why the last login for a site failed, in Meta's words, for 10 minutes.
+	 * Kept here rather than in the return URL, so nobody can put their own
+	 * text on the admin page with a crafted link.
+	 */
+	public static function remember_connect_error( int $blog_id, string $message ): void {
+		set_site_transient( self::connect_error_key( $blog_id ), mb_substr( $message, 0, 300 ), 10 * MINUTE_IN_SECONDS );
+	}
+
+	public static function forget_connect_error( int $blog_id ): void {
+		delete_site_transient( self::connect_error_key( $blog_id ) );
+	}
+
+	private static function connect_error_key( int $blog_id ): string {
+		return 'own_instagram_connect_error_' . $blog_id;
 	}
 }

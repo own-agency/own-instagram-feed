@@ -1,40 +1,55 @@
 name: Release
 
-# Push a tag vX.Y.Z whose version matches the plugin header and VERSION
-# constant. This builds own-instagram-feed.zip and attaches it to a GitHub
-# release; sites pick it up through Dashboard → Updates (Plugin Update Checker).
+# Push a tag vX.Y.Z from main (see CONTRIBUTING.md). The tag must match the
+# plugin header, the VERSION constant and a "## [X.Y.Z]" section in
+# CHANGELOG.md. This builds own-instagram-feed.zip and attaches it to a GitHub
+# release with that changelog section as its text; sites pick it up through
+# Dashboard → Updates (Plugin Update Checker).
+#
+# Two jobs: "build" runs npm/composer (third-party install scripts) with a
+# read-only token; only "publish", which runs no third-party code beyond the
+# pinned release action, may write to the repository.
 
 on:
   push:
     tags: ['v*.*.*']
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - name: Version matches the tag
+      - name: Version and changelog match the tag
         run: |
           TAG="${GITHUB_REF_NAME#v}"
-          grep -q "^ \* Version:           ${TAG}$" own-instagram-feed.php
-          grep -q "const VERSION     = '${TAG}';" own-instagram-feed.php
+          [[ "$TAG" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Tag is not vX.Y.Z"; exit 1; }
+          grep -qx " \* Version:           ${TAG}" own-instagram-feed.php || { echo "Plugin header is not ${TAG}"; exit 1; }
+          grep -qF "const VERSION     = '${TAG}';" own-instagram-feed.php || { echo "VERSION is not ${TAG}"; exit 1; }
+          grep -qF "## [${TAG}]" CHANGELOG.md || { echo "CHANGELOG.md has no section for ${TAG}"; exit 1; }
+          # That section, without its heading, becomes the release text.
+          awk -v v="## [${TAG}]" 'index($0, v) == 1 { on = 1; next } /^## \[/ { on = 0 } /^\[[^]]+\]: / { on = 0 } on' CHANGELOG.md > release-notes.md
+          test -s release-notes.md
 
-      - uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
         with:
           php-version: '8.0'
           tools: composer
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
           cache: npm
 
       - name: Test
-        run: php tests/CoreTest.php
+        run: |
+          php tests/CoreTest.php
+          node tests/relay-test.mjs
 
       - name: Build
         run: |
@@ -45,10 +60,29 @@ jobs:
       - name: Package
         run: |
           mkdir -p dist/own-instagram-feed
-          rsync -a --exclude-from=.distignore --exclude=dist ./ dist/own-instagram-feed/
+          rsync -a --exclude-from=.distignore --exclude=dist --exclude=release-notes.md ./ dist/own-instagram-feed/
           cd dist && zip -qr own-instagram-feed.zip own-instagram-feed
+          mv ../release-notes.md .
 
-      - uses: softprops/action-gh-release@v2
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          files: dist/own-instagram-feed.zip
-          generate_release_notes: true
+          name: release
+          path: |
+            dist/own-instagram-feed.zip
+            dist/release-notes.md
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: release
+
+      - uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
+        with:
+          files: own-instagram-feed.zip
+          body_path: release-notes.md

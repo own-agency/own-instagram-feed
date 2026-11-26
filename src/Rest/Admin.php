@@ -181,7 +181,7 @@ final class Admin {
 		$is_admin_page = false !== strpos( (string) wp_parse_url( $url, PHP_URL_PATH ), '/wp-admin/' );
 
 		return ( $host && $is_admin_page && in_array( $host, $hosts, true ) )
-			? remove_query_arg( array( 'own_instagram', 'own_instagram_message' ), $url )
+			? remove_query_arg( array( 'own_instagram', 'own_instagram_error', 'own_instagram_message' ), $url )
 			: \OWN\InstagramFeed\Admin\SitePage::url();
 	}
 }

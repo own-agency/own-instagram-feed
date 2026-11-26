@@ -90,14 +90,16 @@ final class App {
 	}
 
 	/**
-	 * Where Instagram sends the browser back to for $blog_id: the REST route
-	 * on that site when a relay forwards it there, or when every site
-	 * registers its own URI (single site, per-site activation); in network
-	 * mode without a relay, the main site's route, so the Meta app needs one
-	 * URI for the whole network.
+	 * Where Instagram sends the browser back to for $blog_id. In network mode
+	 * always the main site's route, relay or not: one host per installation,
+	 * so the Meta app (without relay) or the relay's ALLOWED_HOSTS (with) needs
+	 * one entry for the whole network, however many schools and mapped domains
+	 * it has. The pending login is a site transient, so the main site finishes
+	 * it for any site. Otherwise (single site, per-site activation) the site's
+	 * own route.
 	 */
 	public static function callback_url( int $blog_id ): string {
-		$host_blog = ( Sites::is_network_mode() && '' === self::relay_url() ) ? get_main_site_id() : $blog_id;
+		$host_blog = Sites::is_network_mode() ? get_main_site_id() : $blog_id;
 		return get_rest_url( $host_blog, Config::REST_NAMESPACE . '/oauth/callback' );
 	}
 

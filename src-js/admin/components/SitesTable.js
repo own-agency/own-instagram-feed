@@ -127,6 +127,15 @@ export default function SitesTable( { onNotice } ) {
 												) }
 											</span>
 										) }
+										{ site.connectError && (
+											<span className="own-instagram-sub is-error">
+												{ __(
+													'Laatste koppelpoging mislukt:',
+													'own-instagram-feed'
+												) }{ ' ' }
+												{ site.connectError }
+											</span>
+										) }
 										{ site.error && (
 											<span className="own-instagram-sub is-error">
 												{ site.error }
