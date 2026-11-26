@@ -17,7 +17,10 @@
 .own-instagram-tabs .components-tab-panel__tab-content { padding-top: 16px; }
 
 .own-instagram-card .components-card__body > * + * { margin-top: 16px; }
-.own-instagram-card .components-notice { margin: 0 0 16px; }
+/* Side margins only: the gap above comes from the card body's own spacing
+   (> * + *), like every other element. A notice with margin 0 0 16px sat
+   right against the help text above it. */
+.own-instagram-card .components-notice { margin-left: 0; margin-right: 0; margin-bottom: 0; }
 .own-instagram-account { font-size: 14px; }
 .own-instagram-meta { margin: 0 0 12px; color: #50575e; }
 .own-instagram-invite h3,
