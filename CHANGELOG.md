@@ -21,6 +21,13 @@ A release turns that section into a version (see CONTRIBUTING.md).
   as its Relay-URL.
 - The Meta app is now called "OWN Social Feed" (was "My OWN Social Feed"); relay notifications and README follow.
 
+### Fixed
+
+- A development copy (a git checkout of the plugin) no longer checks for
+  updates, so WordPress can't offer an update there that would replace the
+  folder and wipe `.git` and uncommitted work. Live sites, installed from the
+  release zip, update as before.
+
 ## [1.2.1] - 2026-11-26
 
 ### Changed
