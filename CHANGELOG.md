@@ -2,6 +2,12 @@
 
 All notable changes to OWN Instagram Feed. Newest first. [Semver](https://semver.org/): patch for fixes, minor for anything new, major only when the public API (see README) changes.
 
+## 1.0.1 — 2026-11-26
+
+### Added
+
+- **"Instellingen" link** in the plugin's row on the plugins screen: straight to Network Admin → Instagram (network-activated) or Settings → Instagram.
+
 ## 1.0.0 — 2026-11-26
 
 First release, taking over the Instagram feed that was built into the own-framework theme (1.3.0).

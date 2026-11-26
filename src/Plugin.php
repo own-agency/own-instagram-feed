@@ -42,11 +42,26 @@ final class Plugin {
 			SitePage::register();
 			NetworkPage::register();
 			Health::register();
+			add_filter( 'plugin_action_links_' . plugin_basename( PLUGIN_FILE ), array( self::class, 'action_links' ) );
+			add_filter( 'network_admin_plugin_action_links_' . plugin_basename( PLUGIN_FILE ), array( self::class, 'action_links' ) );
 		}
 
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			\WP_CLI::add_command( 'own-instagram', Cli::class );
 		}
+	}
+
+	/**
+	 * "Instellingen" in the plugin's row on the plugins screen: the Meta app
+	 * and all sites in Network Admin, otherwise the site's Instagram page.
+	 *
+	 * @param string[] $links
+	 * @return string[]
+	 */
+	public static function action_links( array $links ): array {
+		$url = is_network_admin() ? NetworkPage::url() : SitePage::url();
+		array_unshift( $links, sprintf( '<a href="%s">%s</a>', esc_url( $url ), esc_html__( 'Instellingen', 'own-instagram-feed' ) ) );
+		return $links;
 	}
 
 	public static function legacy_engine_active(): bool {

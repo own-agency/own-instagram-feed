@@ -3,7 +3,7 @@
  * Plugin Name:       OWN Instagram Feed
  * Plugin URI:        https://github.com/own-agency/own-instagram-feed
  * Description:       Toont de nieuwste posts van een Instagram-account als blok. Elke site koppelt zijn eigen account via de Meta-app van OWN; posts en afbeeldingen worden lokaal bewaard.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 6.6
  * Requires PHP:      8.0
  * Tested up to:      7.1
@@ -24,7 +24,7 @@ namespace OWN\InstagramFeed;
 
 defined( 'ABSPATH' ) || exit;
 
-const VERSION     = '1.0.0';
+const VERSION     = '1.0.1';
 const PLUGIN_FILE = __FILE__;
 const PLUGIN_DIR  = __DIR__;
 
