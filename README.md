@@ -39,7 +39,7 @@ define( 'OWN_INSTAGRAM_DEVELOPERS', array( 'ties', 'dev@ownagency.nl' ) ); // Wi
 define( 'OWN_INSTAGRAM_ALERT_EMAIL', 'dev@ownagency.nl' );                  // Wie de mail krijgt als een koppeling breekt.
 ```
 
-**Zet de hoofddomeinnaam op de allowlist van de relay.** De relay stuurt een Instagram-login alleen door naar installaties op `ALLOWED_HOSTS` (`relay/wrangler.toml`, of in Cloudflare: Worker → Settings → Variables). Op een netwerk loopt elke school via de hoofdsite, dus één regel per installatie, bijv. `ldvleiden.nl`. Staat de host er niet op, dan stopt koppelen met "Ongeldig terugkeeradres".
+**Zet de hoofddomeinnaam op de allowlist van de relay.** De relay stuurt een Instagram-login alleen door naar installaties op `ALLOWED_HOSTS` (`relay/wrangler.toml`, of in Cloudflare: Worker → Settings → Variables). Op een netwerk loopt elke school via de hoofdsite, dus één regel per installatie, bijv. `ldvleiden.nl`. Staat de host er niet op, dan stopt koppelen met "Ongeldig terugkeeradres". De Meta-app-kaart en Site Health laten zien of de installatie erop staat.
 
 **Op een losse klantsite:** zet het app-secret in `wp-config.php` (niet in de database) en definieer `OWN_INSTAGRAM_DEVELOPERS`. Zonder dat is elke beheerder van de site "ontwikkelaar" en ziet de Meta-app-instellingen.
 

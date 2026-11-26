@@ -132,6 +132,7 @@ final class App {
 			'redirectUri'      => self::redirect_uri( get_current_blog_id() ),
 			'usesRelay'        => '' !== self::relay_url(),
 			'networkMode'      => Sites::is_network_mode(),
+			'relayCheck'       => RelayCheck::status(),
 		);
 	}
 }

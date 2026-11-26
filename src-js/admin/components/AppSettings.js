@@ -39,6 +39,61 @@ function secretHelp( app ) {
 		  );
 }
 
+/**
+ * Whether the relay accepts logins for this installation (ALLOWED_HOSTS).
+ *
+ * @param {Object}      root0
+ * @param {Object|null} root0.check { state: allowed|blocked|unknown, host }
+ * @return {Element|null} Notice, or nothing without a relay.
+ */
+function RelayStatus( { check } ) {
+	if ( ! check ) {
+		return null;
+	}
+	if ( 'allowed' === check.state ) {
+		return (
+			<Notice status="success" isDismissible={ false }>
+				{ sprintf(
+					/* translators: %s: host name */
+					__(
+						'%s staat op de allowlist van de relay: koppelen werkt.',
+						'own-instagram-feed'
+					),
+					check.host
+				) }
+			</Notice>
+		);
+	}
+	if ( 'blocked' === check.state ) {
+		return (
+			<Notice status="warning" isDismissible={ false }>
+				<strong>
+					{ sprintf(
+						/* translators: %s: host name */
+						__(
+							'%s staat niet op de allowlist van de relay.',
+							'own-instagram-feed'
+						),
+						check.host
+					) }
+				</strong>{ ' ' }
+				{ __(
+					'Koppelen lukt pas als die host bij ALLOWED_HOSTS in relay/wrangler.toml staat en de relay opnieuw is uitgerold (npx wrangler deploy).',
+					'own-instagram-feed'
+				) }
+			</Notice>
+		);
+	}
+	return (
+		<Notice status="info" isDismissible={ false }>
+			{ __(
+				'De relay kon niet gecontroleerd worden (niet bereikbaar, of een oudere versie zonder controle). Koppelen kan nog steeds werken.',
+				'own-instagram-feed'
+			) }
+		</Notice>
+	);
+}
+
 export default function AppSettings( { onNotice } ) {
 	const [ app, setApp ] = useState( null );
 	const [ form, setForm ] = useState( {
@@ -185,6 +240,8 @@ export default function AppSettings( { onNotice } ) {
 							  )
 					}
 				/>
+
+				<RelayStatus check={ app.relayCheck } />
 
 				<Button
 					variant="primary"

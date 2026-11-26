@@ -13,6 +13,7 @@ namespace OWN\InstagramFeed;
 use OWN\InstagramFeed\Feed\Connection;
 use OWN\InstagramFeed\Feed\ImageStore;
 use OWN\InstagramFeed\Settings\App;
+use OWN\InstagramFeed\Settings\RelayCheck;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -35,6 +36,11 @@ final class Health {
 
 		if ( ! App::is_configured() ) {
 			$problems[] = __( 'De Meta-app (Instagram app ID en secret) is niet ingesteld.', 'own-instagram-feed' );
+		}
+		$relay = RelayCheck::status();
+		if ( $relay && 'blocked' === $relay['state'] ) {
+			/* translators: %s: host name */
+			$problems[] = sprintf( __( '%s staat niet op de allowlist van de relay (ALLOWED_HOSTS). Koppelen lukt pas als het daar is toegevoegd.', 'own-instagram-feed' ), $relay['host'] );
 		}
 		if ( Connection::is_connected() ) {
 			if ( Connection::needs_reconnect() ) {
