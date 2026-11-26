@@ -10,6 +10,14 @@ A release turns that section into a version (see CONTRIBUTING.md).
 
 ## [Unreleased]
 
+### Added
+
+- Relay: privacy policy for the Meta app at `/privacy`, with deletion instructions at `/privacy#verwijderen`. Replaces the pages on framework.myownagency.nl, which no longer exists.
+
+### Changed
+
+- The Meta app is now called "OWN Social Feed" (was "My OWN Social Feed"); relay notifications and README follow.
+
 ## [1.2.1] - 2026-11-26
 
 ### Changed

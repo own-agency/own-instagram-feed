@@ -39,5 +39,14 @@ if (r.status !== 403) { console.log('FAIL check: bad signature refused'); fail++
 r = await ask(cb, sign(bad));
 if (r.status !== 403) { console.log('FAIL check: signature for another url refused'); fail++; } else console.log('PASS check: signature for another url refused');
 
+// --- Privacy policy (/privacy): public, also without a secret (Meta checks it).
+for (const path of ['/privacy', '/privacy/']) {
+	const res = await worker.fetch(new Request('https://relay.test' + path), {}, { waitUntil() {} });
+	const body = await res.text();
+	const ok = res.status === 200 && body.includes('id="verwijderen"') && body.includes('OWN Social Feed');
+	console.log((ok ? 'PASS ' : 'FAIL ') + 'privacy page ' + path);
+	if (!ok) fail++;
+}
+
 console.log(fail ? fail + " FAILED" : "ALL PASSED");
 process.exit(fail ? 1 : 0);
