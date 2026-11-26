@@ -222,7 +222,7 @@ export default function AppSettings( { onNotice } ) {
 					}
 					value={ form.relay }
 					onChange={ set( 'relay' ) }
-					placeholder="https://own-instagram-relay.….workers.dev/"
+					placeholder="https://connect.myownagency.nl/"
 				/>
 
 				<CopyField

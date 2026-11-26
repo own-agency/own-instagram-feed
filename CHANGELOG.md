@@ -10,6 +10,17 @@ A release turns that section into a version (see CONTRIBUTING.md).
 
 ## [Unreleased]
 
+### Changed
+
+- **Relay on its own domain**: `https://connect.myownagency.nl/`. The old
+  `workers.dev` address keeps working until every installation and the Meta
+  app have moved.
+
+### Fixed
+
+- **Notices in the admin cards** (such as the relay allowlist check) no longer
+  sit right against the text above them.
+
 ## [1.2.0] - 2026-11-26
 
 ### Added

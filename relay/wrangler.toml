@@ -3,13 +3,13 @@ name = "own-instagram-relay"
 main = "worker.js"
 compatibility_date = "2026-11-01"
 
-# Adres: https://own-instagram-relay.aged-wildflower-ae4f.workers.dev/
-# Hernoem het workers.dev-subdomein van het Cloudflare-account niet: elke
-# installatie en de Meta-app verwijzen naar dit adres.
-#
-# Een eigen domein kan alleen als de DNS van dat domein in hetzelfde
-# Cloudflare-account staat (myownagency.nl staat bij DigitalOcean). Dan:
-#   routes = [{ pattern = "connect.myownagency.nl", custom_domain = true }]
+# Adres: https://connect.myownagency.nl/ (myownagency.nl staat in hetzelfde
+# Cloudflare-account; Cloudflare maakt DNS-record en certificaat zelf aan).
+routes = [{ pattern = "connect.myownagency.nl", custom_domain = true }]
+
+# Het oude adres (own-instagram-relay.aged-wildflower-ae4f.workers.dev) blijft
+# bereikbaar tot de Meta-app en elke installatie het nieuwe adres gebruiken.
+# Daarna op false.
 workers_dev = true
 
 # Hosts waarheen de relay een Instagram-login mag doorsturen: per installatie

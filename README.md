@@ -19,7 +19,7 @@ Ontwikkelen, branches en releases: zie [CONTRIBUTING.md](CONTRIBUTING.md). Wijzi
 - App van het type **Business** met het product **Instagram** → "API setup with Instagram login".
 - **Live**, met advanced access voor `instagram_business_basic`.
 - Business login settings:
-  - OAuth redirect URI: de relay, `https://own-instagram-relay.aged-wildflower-ae4f.workers.dev/`
+  - OAuth redirect URI: de relay, `https://connect.myownagency.nl/`
   - Deauthorize callback URL: `…/?deauthorize`
   - Data deletion request URL: `…/?data-deletion`
 - Meta vraagt één keer per jaar om de **data access renewal**. Rond die af, anders worden alle feeds tegelijk beperkt.
@@ -34,7 +34,7 @@ Vul in: **Instagram app ID** (`747057097604862`, niet het app-ID bovenaan het Me
 ```php
 define( 'OWN_INSTAGRAM_APP_ID', '747057097604862' );
 define( 'OWN_INSTAGRAM_APP_SECRET', '…' );
-define( 'OWN_INSTAGRAM_RELAY_URL', 'https://own-instagram-relay.aged-wildflower-ae4f.workers.dev/' );
+define( 'OWN_INSTAGRAM_RELAY_URL', 'https://connect.myownagency.nl/' );
 define( 'OWN_INSTAGRAM_DEVELOPERS', array( 'ties', 'dev@ownagency.nl' ) ); // Wie de Meta-app ziet; nodig zodra een klant ook (super)admin is.
 define( 'OWN_INSTAGRAM_ALERT_EMAIL', 'dev@ownagency.nl' );                  // Wie de mail krijgt als een koppeling breekt.
 ```
