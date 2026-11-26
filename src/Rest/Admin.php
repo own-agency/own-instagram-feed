@@ -26,6 +26,7 @@ use OWN\InstagramFeed\Feed\Connection;
 use OWN\InstagramFeed\Feed\Sync;
 use OWN\InstagramFeed\Settings\Access;
 use OWN\InstagramFeed\Settings\App;
+use OWN\InstagramFeed\Settings\RelayCheck;
 use OWN\InstagramFeed\Sites;
 use OWN\InstagramFeed\Status;
 use WP_Error;
@@ -152,6 +153,7 @@ final class Admin {
 			}
 		}
 		App::save( $values, (bool) $request->get_param( 'clearSecret' ) );
+		RelayCheck::forget();
 
 		return rest_ensure_response( App::for_admin() );
 	}

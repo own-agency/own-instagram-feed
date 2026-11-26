@@ -10,6 +10,16 @@ A release turns that section into a version (see CONTRIBUTING.md).
 
 ## [Unreleased]
 
+### Added
+
+- **Relay allowlist check** on the Meta-app card and in Site Health: the
+  plugin asks the relay (signed with the app secret) whether this
+  installation is on `ALLOWED_HOSTS`. A missing entry shows while setting up,
+  with the exact fix, instead of when a school can't connect. Checked again
+  after saving the Meta-app settings, otherwise cached for five minutes.
+  Needs the relay from this version; an older relay shows "kon niet
+  gecontroleerd worden".
+
 ## [1.1.0] - 2026-11-26
 
 ### Security

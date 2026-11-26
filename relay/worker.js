@@ -21,6 +21,10 @@
  *   POST /?data-deletion         Meta: verwijderverzoek; antwoordt met
  *                                { url, confirmation_code }.
  *   GET  /?deletion-status=…     Statuspagina die Meta aan de gebruiker toont.
+ *   GET  /?check=<url>&sig=…     Vraag van de plugin: staat deze callback op
+ *                                ALLOWED_HOSTS? sig = HMAC-SHA256(url, app
+ *                                secret), base64url, zodat buitenstaanders de
+ *                                lijst niet kunnen aftasten.
  *
  * De relay weet niet op welke site een account staat en verwijdert dus niets
  * zelf. Dat doen de sites: na 30 dagen met een ongeldig token wist de plugin
@@ -48,6 +52,10 @@ export default {
 
 		if (!env.INSTAGRAM_APP_SECRET) {
 			return text('De Instagram-relay is nog niet ingesteld.', 500);
+		}
+
+		if (params.has('check')) {
+			return checkAllowed(params, env.INSTAGRAM_APP_SECRET, env.ALLOWED_HOSTS);
 		}
 
 		if (params.has('deletion-status')) {
@@ -128,6 +136,35 @@ async function forwardOAuth(params, secret, allowedHosts) {
 	return new Response(null, {
 		status: 302,
 		headers: { Location: target.toString(), ...baseHeaders() },
+	});
+}
+
+/**
+ * The plugin's Meta-app card asks whether its own callback would be accepted,
+ * so a missing ALLOWED_HOSTS entry shows while setting up, not when a school
+ * tries to connect. Signed, so the list can't be probed from outside.
+ */
+async function checkAllowed(params, secret, allowedHosts) {
+	const target = params.get('check') || '';
+	if (!(await hmacVerify(secret, target, params.get('sig') || ''))) {
+		return json({ error: 'invalid_signature' }, 403);
+	}
+	let allowed = false;
+	let host = '';
+	try {
+		const url = new URL(target);
+		host = url.hostname;
+		allowed = isAllowedTarget(url, allowedHosts);
+	} catch {
+		// Not a URL: not allowed.
+	}
+	return json({ allowed, host });
+}
+
+function json(data, status = 200) {
+	return new Response(JSON.stringify(data), {
+		status,
+		headers: { 'Content-Type': 'application/json', ...baseHeaders() },
 	});
 }
 
