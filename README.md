@@ -1,6 +1,6 @@
 # OWN Instagram Feed
 
-Toont de nieuwste posts van een Instagram-account als blok ("Instagram-feed"). Elke website koppelt zijn eigen account via één Meta-app van OWN ("My OWN Social Feed"). De website haalt elk uur zelf nieuwe posts op en bewaart de afbeeldingen lokaal: bezoekers laden niets van Meta, en de feed blijft werken als Instagram's afbeeldingslinks verlopen.
+Toont de nieuwste posts van een Instagram-account als blok ("Instagram-feed"). Elke website koppelt zijn eigen account via één Meta-app van OWN ("OWN Social Feed"). De website haalt elk uur zelf nieuwe posts op en bewaart de afbeeldingen lokaal: bezoekers laden niets van Meta, en de feed blijft werken als Instagram's afbeeldingslinks verlopen.
 
 Werkt op een losse site en op multisite, per site of netwerkbreed geactiveerd. Vereist WordPress 6.6+ en PHP 8.0+.
 
@@ -14,7 +14,7 @@ Ontwikkelen, branches en releases: zie [CONTRIBUTING.md](CONTRIBUTING.md). Wijzi
 
 ## Instellen
 
-### Meta-app (eenmalig, al gedaan voor "My OWN Social Feed")
+### Meta-app (eenmalig, al gedaan voor "OWN Social Feed")
 
 - App van het type **Business** met het product **Instagram** → "API setup with Instagram login".
 - **Live**, met advanced access voor `instagram_business_basic`.
@@ -22,6 +22,11 @@ Ontwikkelen, branches en releases: zie [CONTRIBUTING.md](CONTRIBUTING.md). Wijzi
   - OAuth redirect URI: de relay, `https://connect.myownagency.nl/`
   - Deauthorize callback URL: `…/?deauthorize`
   - Data deletion request URL: `…/?data-deletion`
+- App settings → Basic:
+  - Privacy policy URL: `https://connect.myownagency.nl/privacy` (staat in de relay, `privacyPage()` in `relay/worker.js`)
+  - User data deletion: **Data deletion instructions URL** `https://connect.myownagency.nl/privacy#verwijderen`. Niet de callback: die hoort bij Facebook Login, wordt met het app-secret van de Meta-app ondertekend en niet met het Instagram-secret dat de relay kent.
+  - Category: Business and pages.
+- Verandert wat de plugin leest of bewaart, werk dan het privacybeleid in de relay bij en rol de relay opnieuw uit.
 - Meta vraagt één keer per jaar om de **data access renewal**. Rond die af, anders worden alle feeds tegelijk beperkt.
 
 ### Per installatie
