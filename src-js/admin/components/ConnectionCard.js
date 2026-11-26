@@ -98,6 +98,17 @@ export default function ConnectionCard( { status, onChange, onNotice } ) {
 				</Flex>
 			</CardHeader>
 			<CardBody>
+				{ status.connectError && (
+					<Notice status="error" isDismissible={ false }>
+						<strong>
+							{ __(
+								'De laatste koppelpoging is mislukt.',
+								'own-instagram-feed'
+							) }
+						</strong>{ ' ' }
+						{ status.connectError }
+					</Notice>
+				) }
 				{ 'reconnect' === state && (
 					<Notice status="warning" isDismissible={ false }>
 						<strong>

@@ -2,15 +2,21 @@
  * Instagram-relay van OWN, als Cloudflare Worker.
  *
  * Eén vaste URL in de Meta-app ("My OWN Social Feed") voor alle installaties
- * van dit theme: OAuth redirect URI, Deauthorize callback en Data deletion
- * request. Slaat niets op; wisselt geen tokens (dat doet de site zelf).
+ * van de plugin OWN Instagram Feed: OAuth redirect URI, Deauthorize callback
+ * en Data deletion request. Slaat niets op; wisselt geen tokens (dat doet de
+ * site zelf).
  *
  *   GET  /?code=…&state=…        Instagram na het inloggen: controleer de
  *                                handtekening in de state en stuur door naar
  *                                het terugkeeradres daarin (de callback van
  *                                de site). Zie Auth\State::sign() in de plugin
  *                                (src/Auth/State.php); tests/CoreTest.php legt
- *                                het formaat vast.
+ *                                het formaat vast. Alleen naar een host op
+ *                                ALLOWED_HOSTS en het callback-pad van de
+ *                                plugin: iedereen met de app-secret (die in
+ *                                elke installatie staat) kan een geldige state
+ *                                maken, dus de handtekening alleen is niet
+ *                                genoeg om logins niet elders te laten landen.
  *   POST /?deauthorize           Meta: account heeft de app verwijderd.
  *   POST /?data-deletion         Meta: verwijderverzoek; antwoordt met
  *                                { url, confirmation_code }.
@@ -21,16 +27,19 @@
  * posts en beelden (Feed\Cleanup). Ligt de relay
  * plat, dan mislukt alleen nieuw koppelen; bestaande feeds verversen zonder.
  *
- * Instellen (in deze map). Via pnpm, niet npx: het theme's package.json
- * eist pnpm (devEngines), en npx weigert dan met EBADDEVENGINES.
- *   pnpm dlx wrangler deploy
- *   pnpm dlx wrangler secret put INSTAGRAM_APP_SECRET   # Instagram app secret
- *   pnpm dlx wrangler secret put ALERT_WEBHOOK_URL      # optioneel, Slack of
- *                                                       # Google Chat webhook
- * Zonder webhook staat elke melding in de Workers-logs (observability).
+ * Instellen (in deze map, relay/):
+ *   npx wrangler deploy
+ *   npx wrangler secret put INSTAGRAM_APP_SECRET   # Instagram app secret
+ *   npx wrangler secret put ALERT_WEBHOOK_URL      # optioneel, Slack of
+ *                                                  # Google Chat webhook
+ * Adres en ALLOWED_HOSTS: zie wrangler.toml; ALLOWED_HOSTS is ook in het
+ * Cloudflare-dashboard aan te passen (Worker → Settings → Variables) zonder
+ * opnieuw uit te rollen. Zonder webhook staat elke melding in de Workers-logs
+ * (observability).
  */
 
 const STATE_MAX_AGE = 30 * 60; // Zelfde geldigheid als de state op de site.
+const CALLBACK_ROUTE = '/own-instagram/v1/oauth/callback';
 
 export default {
 	async fetch(request, env, ctx) {
@@ -69,13 +78,13 @@ export default {
 			});
 		}
 
-		return forwardOAuth(params, env.INSTAGRAM_APP_SECRET);
+		return forwardOAuth(params, env.INSTAGRAM_APP_SECRET, env.ALLOWED_HOSTS);
 	},
 };
 
 /* ---------------------------------------------------------------------- */
 
-async function forwardOAuth(params, secret) {
+async function forwardOAuth(params, secret, allowedHosts) {
 	const parts = (params.get('state') || '').split('.');
 	if (parts.length !== 2) {
 		return text('Ongeldige koppelpoging.', 400);
@@ -105,7 +114,7 @@ async function forwardOAuth(params, secret) {
 	} catch {
 		return text('Ongeldig terugkeeradres.', 400);
 	}
-	if (target.protocol !== 'https:' && target.protocol !== 'http:') {
+	if (!isAllowedTarget(target, allowedHosts)) {
 		return text('Ongeldig terugkeeradres.', 400);
 	}
 
@@ -120,6 +129,38 @@ async function forwardOAuth(params, secret) {
 		status: 302,
 		headers: { Location: target.toString(), ...baseHeaders() },
 	});
+}
+
+/**
+ * The return address must be the plugin's callback on an allowed host.
+ *
+ * ALLOWED_HOSTS: hostnames separated by spaces or commas; "*.example.nl"
+ * also allows every subdomain. Without it nothing is forwarded (fail closed).
+ * https only, except local development hosts (localhost, *.local, *.test).
+ *
+ * Exported for the tests.
+ */
+export function isAllowedTarget(target, allowedHosts) {
+	const host = target.hostname.toLowerCase();
+	const local = 'localhost' === host || host.endsWith('.local') || host.endsWith('.test');
+	if (target.protocol !== 'https:' && !(local && target.protocol === 'http:')) {
+		return false;
+	}
+	if (target.username || target.password) {
+		return false;
+	}
+
+	const route = target.searchParams.get('rest_route');
+	const isCallback = target.pathname.endsWith('/wp-json' + CALLBACK_ROUTE) || (route === CALLBACK_ROUTE && target.pathname.endsWith('/'));
+	if (!isCallback) {
+		return false;
+	}
+
+	return String(allowedHosts || '')
+		.toLowerCase()
+		.split(/[\s,]+/)
+		.filter(Boolean)
+		.some((entry) => (entry.startsWith('*.') ? host === entry.slice(2) || host.endsWith(entry.slice(1)) : host === entry));
 }
 
 /** Meta's signed_request: "<handtekening>.<payload>", beide base64url. */

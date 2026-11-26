@@ -23,6 +23,7 @@ use OWN\InstagramFeed\Feed\Connection;
 use OWN\InstagramFeed\Feed\Sync;
 use OWN\InstagramFeed\Settings\App;
 use OWN\InstagramFeed\Sites;
+use OWN\InstagramFeed\Status;
 use WP_Error;
 use WP_REST_Request;
 
@@ -75,17 +76,30 @@ final class Oauth {
 		$blog_id   = (int) $pending['blog_id'];
 		$site_name = '';
 		$error     = null;
+		$code      = ''; // Fixed reason for the admin page: never free text in a URL.
 
-		if ( $request->get_param( 'error' ) ) {
+		// A denial has no code. Not only $request['error']: WordPress reserves
+		// "error" as a query var (class-wp.php) and can drop it from $_GET
+		// before the REST server sees it; error_reason does come through.
+		$denied = $request->get_param( 'error' ) || $request->get_param( 'error_reason' ) || '' === (string) $request->get_param( 'code' );
+
+		if ( $denied ) {
+			$code  = 'denied';
 			$error = new WP_Error( 'own_instagram', __( 'Er is geen toestemming gegeven op Instagram.', 'own-instagram-feed' ) );
 		} elseif ( ! Sites::exists( $blog_id ) ) {
+			$code  = 'site';
 			$error = new WP_Error( 'own_instagram', __( 'De website bestaat niet meer.', 'own-instagram-feed' ) );
+		} elseif ( '' !== (string) $pending['invite'] && ! Invites::find( (string) $pending['invite'] ) ) {
+			// Revoked or replaced while this login was underway: a leaked link
+			// stops working at once, not only for logins started afterwards.
+			$code  = 'invite';
+			$error = new WP_Error( 'own_instagram', __( 'Deze koppellink is ingetrokken of vervangen. Vraag een nieuwe link aan.', 'own-instagram-feed' ) );
 		} else {
-			$code = (string) $request->get_param( 'code' );
+			$oauth_code = (string) $request->get_param( 'code' );
 			[ $error, $site_name ] = Sites::in(
 				$blog_id,
-				static function () use ( $code, $pending ) {
-					$error = Auth::connect( $code, (string) $pending['redirect_uri'] );
+				static function () use ( $oauth_code, $pending ) {
+					$error = Auth::connect( $oauth_code, (string) $pending['redirect_uri'] );
 					if ( ! $error ) {
 						// A failing first sync (an image that won't save) is
 						// not a failed connection: the token is in, the error
@@ -95,16 +109,25 @@ final class Oauth {
 					return array( $error, (string) get_bloginfo( 'name' ) );
 				}
 			);
-			if ( ! $error ) {
+			if ( $error ) {
+				$code = 'exchange';
+			} else {
 				Invites::revoke( $blog_id );
 			}
+		}
+
+		// Meta's own wording stays on the server, shown with the site's status.
+		if ( $error ) {
+			Status::remember_connect_error( $blog_id, $error->get_error_message() );
+		} else {
+			Status::forget_connect_error( $blog_id );
 		}
 
 		if ( Auth::RETURN_ADMIN === $pending['return'] && '' !== $pending['return_url'] ) {
 			$args = $error
 				? array(
-					'own_instagram'         => 'error',
-					'own_instagram_message' => rawurlencode( mb_substr( $error->get_error_message(), 0, 200 ) ),
+					'own_instagram'       => 'error',
+					'own_instagram_error' => $code,
 				)
 				: array( 'own_instagram' => 'connected' );
 			// The URL was built by this plugin when the login started; on a
