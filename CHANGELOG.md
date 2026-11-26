@@ -10,6 +10,8 @@ A release turns that section into a version (see CONTRIBUTING.md).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-26
+
 ### Added
 
 - **Relay allowlist check** on the Meta-app card and in Site Health: the
@@ -109,7 +111,8 @@ own-framework theme (1.3.0–1.5.0).
   reconnecting needed), and conversion of that theme's `acf/instagram-feed`
   blocks to this plugin's block.
 
-[Unreleased]: https://github.com/own-agency/own-instagram-feed/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/own-agency/own-instagram-feed/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/own-agency/own-instagram-feed/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/own-agency/own-instagram-feed/compare/v1.0.2...v1.1.0
 [1.0.2]: https://github.com/own-agency/own-instagram-feed/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/own-agency/own-instagram-feed/compare/v1.0.0...v1.0.1
